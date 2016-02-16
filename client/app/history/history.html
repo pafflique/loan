@@ -1,1 +1,31 @@
-<div>This is the history view.</div>
+<div class="container history">
+  <table class="table table-condensed">
+    <thead>
+    <tr>
+      <th>Name</th>
+      <th>Phone</th>
+      <th>IBAN</th>
+      <th>Amount taken</th>
+      <th>Amount to return</th>
+      <th>Request date</th>
+      <th>Return date</th>
+      <th>Extensions</th>
+      <th>Extend</th>
+    </tr>
+    </thead>
+    <tbody>
+    <tr ng-repeat="item in vm.history">
+      <td>{{::item.name}}</td>
+      <td>{{::item.phone}}</td>
+      <td>{{::item.iban}}</td>
+      <td>€&nbsp;{{::item.amount}}</td>
+      <td>€&nbsp;{{item.amount + item.amount * item.interest | number: 2}}</td>
+      <td>{{::item.request | date}}</td>
+      <td>{{::item.return | date}}</td>
+      <td>{{::item.extensions || '-'}}</td>
+      <td><button type="button" class="btn btn-default btn-xs" ng-click="vm.extend(item)">Extend</button></td>
+    </tr>
+    <tr>
+    </tbody>
+  </table>
+</div>

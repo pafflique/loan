@@ -6,6 +6,7 @@ angular.module('loanApp')
       .state('history', {
         url: '/history',
         templateUrl: 'app/history/history.html',
-        controller: 'HistoryCtrl'
+        controller: 'HistoryCtrl',
+        controllerAs: 'vm'
       });
   });

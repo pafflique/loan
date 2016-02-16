@@ -1,7 +1,7 @@
 'use strict';
 
 angular.module('loanApp')
-  .controller('LoanCtrl', function (loan) {
+  .controller('LoanCtrl', function (loans, $state) {
     let vm = this;
 
     vm.datePickerOpened = false;
@@ -27,12 +27,18 @@ angular.module('loanApp')
     vm.onSubmit = () => {
       vm.errors = [];
 
-      loan
+      loans
         .post(vm.model)
-        .catch((response) => {
-          _.forOwn(response.data.errors, (error) => {
-            vm.errors.push(error.message);
-          });
-        });
+        .catch(handleError);
     };
+
+    function handleError(response) {
+      if (response.status === 403) {
+        $state.go('sorry');
+      } else {
+        _.forOwn(response.data.errors, (error) => {
+          vm.errors.push(error.message);
+        });
+      }
+    }
   });
