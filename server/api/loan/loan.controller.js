@@ -103,6 +103,17 @@ function risksTooHigh(req) {
 
 }
 
+function approveOrReject(loan) {
+  let updated = loan.toObject();
+  updated.status = Math.random() > 0.3 ? 'approved' : 'rejected';
+
+  setTimeout(() => {
+    saveUpdates(updated)(loan);
+  }, 45000);
+
+  return loan;
+}
+
 // Gets a list of Loans
 export function index(req, res) {
   Loan.findAsync()
@@ -127,7 +138,7 @@ export function create(req, res) {
       req.body.request = new Date();
       return Loan.createAsync(req.body);
     })
-    .delay(2000)
+    .then(approveOrReject)
     .then(respondWithResult(res, 201))
     .catch(handleError(res));
 }

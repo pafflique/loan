@@ -1,5 +1,5 @@
 <div class="container loan">
-  <form ng-submit="vm.onSubmit()">
+  <form ng-submit="vm.onSubmit()" ng-if="!vm.pollingStatus" novalidate>
     <div class="form-group">
       <label for="name">Name</label>
       <input type="text" class="form-control" id="name" placeholder="Name" ng-model="vm.model.name">
@@ -14,10 +14,7 @@
     </div>
     <div class="form-group">
       <label for="amount">Amount</label>
-      <div class="input-group">
-        <span class="input-group-addon">€</span>
-        <input type="text" class="form-control" id="amount" placeholder="Amount" ng-model="vm.model.amount" ng-change="vm.updateAmountToReturn()">
-      </div>
+      <rzslider id="amount" rz-slider-model="vm.model.amount" rz-slider-options="vm.sliderOptions"></rzslider>
     </div>
     <div class="form-group">
       <label for="return">Return Date</label>
@@ -41,4 +38,22 @@
     </ul>
     <button type="submit" class="btn btn-default">Submit</button>
   </form>
+
+  <div class="loan-polling jumbotron" ng-if="vm.pollingStatus">
+    <div ng-if="!vm.status">
+      <h3 class="text-center">We are processing your application</h3>
+      <div class="spinner">
+        <div class="rect1"></div>
+        <div class="rect2"></div>
+        <div class="rect3"></div>
+        <div class="rect4"></div>
+        <div class="rect5"></div>
+      </div>
+    </div>
+    <div ng-if="vm.status" class="text-center">
+      <h3 class="">Your application has been</h3>
+      <p class="text-uppercase    " ng-class="{'text-success': vm.status === 'approved', 'text-danger': vm.status === 'rejected'}">{{vm.status}}</p>
+      <button type="button" class="btn btn-default" ng-click="vm.pollingStatus = false">{{vm.status === 'approved' ? 'I want more!' : 'Try again'}}</button>
+    </div>
+  </div>
 </div>

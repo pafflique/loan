@@ -11,6 +11,7 @@ var LoanSchema = new mongoose.Schema({
   return: {type: Date, required: true},
   request: {type: Date},
   extensions: {type: Number, default: 0},
+  status: {type: String, enum: ['pending', 'rejected', 'approved'], default: 'pending'},
   ip: {type: String}
 });
 

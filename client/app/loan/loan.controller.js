@@ -1,12 +1,26 @@
 'use strict';
 
 angular.module('loanApp')
-  .controller('LoanCtrl', function (loans, $state) {
+  .controller('LoanCtrl', function (loans, $state, $interval) {
     let vm = this;
 
+    vm.sliderOptions = {
+      showSelectionBar: true,
+      hideLimitLabels: true,
+      step: 10,
+      floor: 50,
+      ceil: 3000,
+      translate: function(value) {
+        return `€ ${value}`;
+      }
+    };
+
     vm.datePickerOpened = false;
+    vm.pollingStatus = false;
+    vm.status = null;
+
     vm.amountToReturn = 0;
-    vm.model = {};
+    vm.model = {amount: 50};
     vm.errors = [];
 
     vm.open = () => {
@@ -29,8 +43,34 @@ angular.module('loanApp')
 
       loans
         .post(vm.model)
-        .catch(handleError);
+        .catch(handleError)
+        .then(pollStatus);
     };
+
+    function pollStatus(model) {
+      vm.pollingStatus = true;
+      vm.status = null;
+
+      let promise = $interval(() => {
+        loans
+          .get(model._id)
+          .then(handleStatus)
+          .then((stop) => {
+            if (stop) {
+              $interval.cancel(promise);
+            }
+          });
+      }, 30000);
+    }
+
+    function handleStatus(model) {
+      if (model.status !== 'pending') {
+        vm.status = model.status;
+        return true;
+      }
+
+      return false;
+    }
 
     function handleError(response) {
       if (response.status === 403) {
