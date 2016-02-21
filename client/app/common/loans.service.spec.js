@@ -6,13 +6,18 @@ describe('Service: loan', function () {
   beforeEach(module('loanApp'));
 
   // instantiate service
-  var loan;
-  beforeEach(inject(function (_loan_) {
-    loan = _loan_;
+  var loans;
+  beforeEach(inject(function (_loans_) {
+    loans = _loans_;
   }));
 
-  it('should do something', function () {
-    expect(!!loan).toBe(true);
+  it('should calculate the amount to return', function () {
+    let amount = 100;
+    let dateFrom = new Date(2016, 3, 5);
+    let dateTo = new Date(2016, 3, 12);
+    let expected = '135.00';
+
+    expect(loans.getAmountToReturn(amount, dateTo, dateFrom)).toBe(expected);
   });
 
 });

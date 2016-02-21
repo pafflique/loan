@@ -5,17 +5,12 @@ var proxyquire = require('proxyquire').noPreserveCache();
 var loanCtrlStub = {
   index: 'loanCtrl.index',
   show: 'loanCtrl.show',
-  create: 'loanCtrl.create',
-  update: 'loanCtrl.update',
-  destroy: 'loanCtrl.destroy'
+  create: 'loanCtrl.create'
 };
 
 var routerStub = {
   get: sinon.spy(),
-  put: sinon.spy(),
-  patch: sinon.spy(),
-  post: sinon.spy(),
-  delete: sinon.spy()
+  post: sinon.spy()
 };
 
 // require the index with our stubbed out modules
@@ -63,35 +58,4 @@ describe('Loan API Router:', function() {
     });
 
   });
-
-  describe('PUT /api/loans/:id', function() {
-
-    it('should route to loan.controller.update', function() {
-      routerStub.put
-        .withArgs('/:id', 'loanCtrl.update')
-        .should.have.been.calledOnce;
-    });
-
-  });
-
-  describe('PATCH /api/loans/:id', function() {
-
-    it('should route to loan.controller.update', function() {
-      routerStub.patch
-        .withArgs('/:id', 'loanCtrl.update')
-        .should.have.been.calledOnce;
-    });
-
-  });
-
-  describe('DELETE /api/loans/:id', function() {
-
-    it('should route to loan.controller.destroy', function() {
-      routerStub.delete
-        .withArgs('/:id', 'loanCtrl.destroy')
-        .should.have.been.calledOnce;
-    });
-
-  });
-
 });

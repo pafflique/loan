@@ -2,10 +2,13 @@
 
 var app = require('../..');
 import request from 'supertest';
+import sinon from 'sinon';
+import LoanUtil from './loan.util';
 
 var newLoan;
 
 describe('Loan API:', function() {
+  let date = new Date(2016, 3, 5);
 
   describe('GET /api/loans', function() {
     var loans;
@@ -32,11 +35,20 @@ describe('Loan API:', function() {
 
   describe('POST /api/loans', function() {
     beforeEach(function(done) {
+      sinon.stub(LoanUtil, 'risksTooHigh', function () {
+        return new Promise(function (resolve) {
+          resolve();
+        });
+      });
+
       request(app)
         .post('/api/loans')
         .send({
-          name: 'New Loan',
-          info: 'This is the brand new loan!!!'
+          name: 'Pavel Staselun',
+          phone: '123456789',
+          iban: 'LVHABA5023123789287423',
+          amount: 100,
+          return: date
         })
         .expect(201)
         .expect('Content-Type', /json/)
@@ -50,8 +62,11 @@ describe('Loan API:', function() {
     });
 
     it('should respond with the newly created loan', function() {
-      newLoan.name.should.equal('New Loan');
-      newLoan.info.should.equal('This is the brand new loan!!!');
+      newLoan.name.should.equal('Pavel Staselun');
+      newLoan.phone.should.equal('123456789');
+      newLoan.iban.should.equal('LVHABA5023123789287423');
+      newLoan.amount.should.equal(100);
+      newLoan.return.should.equal(date.toISOString());
     });
 
   });
@@ -78,70 +93,11 @@ describe('Loan API:', function() {
     });
 
     it('should respond with the requested loan', function() {
-      loan.name.should.equal('New Loan');
-      loan.info.should.equal('This is the brand new loan!!!');
+      loan.name.should.equal('Pavel Staselun');
+      loan.phone.should.equal('123456789');
+      loan.iban.should.equal('LVHABA5023123789287423');
+      loan.amount.should.equal(100);
+      loan.return.should.equal(date.toISOString());
     });
-
   });
-
-  describe('PUT /api/loans/:id', function() {
-    var updatedLoan;
-
-    beforeEach(function(done) {
-      request(app)
-        .put('/api/loans/' + newLoan._id)
-        .send({
-          name: 'Updated Loan',
-          info: 'This is the updated loan!!!'
-        })
-        .expect(200)
-        .expect('Content-Type', /json/)
-        .end(function(err, res) {
-          if (err) {
-            return done(err);
-          }
-          updatedLoan = res.body;
-          done();
-        });
-    });
-
-    afterEach(function() {
-      updatedLoan = {};
-    });
-
-    it('should respond with the updated loan', function() {
-      updatedLoan.name.should.equal('Updated Loan');
-      updatedLoan.info.should.equal('This is the updated loan!!!');
-    });
-
-  });
-
-  describe('DELETE /api/loans/:id', function() {
-
-    it('should respond with 204 on successful removal', function(done) {
-      request(app)
-        .delete('/api/loans/' + newLoan._id)
-        .expect(204)
-        .end((err, res) => {
-          if (err) {
-            return done(err);
-          }
-          done();
-        });
-    });
-
-    it('should respond with 404 when loan does not exist', function(done) {
-      request(app)
-        .delete('/api/loans/' + newLoan._id)
-        .expect(404)
-        .end((err, res) => {
-          if (err) {
-            return done(err);
-          }
-          done();
-        });
-    });
-
-  });
-
 });

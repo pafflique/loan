@@ -1,7 +1,7 @@
 'use strict';
 
 angular.module('loanApp')
-  .controller('LoanCtrl', function (loans, $state, $interval) {
+  .controller('LoanCtrl', function (loans, $scope, $state, $interval) {
     let vm = this;
 
     vm.sliderOptions = {
@@ -27,25 +27,24 @@ angular.module('loanApp')
       vm.datePickerOpened = true;
     };
 
-    vm.updateAmountToReturn = () => {
-      if (!vm.model.return || !vm.model.amount) {
-        return 0;
-      }
-
-      let now = new Date();
-      let dayCount = (vm.model.return - now) / 1000 / 60 / 60 / 24;
-      let amount = parseFloat(vm.model.amount);
-      vm.amountToReturn = (amount + (amount * 0.05 * dayCount)).toFixed(2);
-    };
-
     vm.onSubmit = () => {
       vm.errors = [];
 
       loans
         .post(vm.model)
-        .catch(handleError)
-        .then(pollStatus);
+        .then(pollStatus)
+        .catch(handleError);
     };
+
+    $scope.$watchGroup([() => vm.model.amount, () => vm.model.return], updateAmountToReturn);
+
+    function updateAmountToReturn() {
+      if (!vm.model.return || !vm.model.amount) {
+        return 0;
+      }
+
+      vm.amountToReturn = loans.getAmountToReturn(vm.model.amount, vm.model.return);
+    }
 
     function pollStatus(model) {
       vm.pollingStatus = true;

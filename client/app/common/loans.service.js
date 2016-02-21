@@ -3,6 +3,8 @@
 angular.module('loanApp')
   .factory('loans', function ($resource) {
     const ENDPOINT = '/api/loans/:id';
+    const INTEREST = 0.05;
+
     let API = $resource(ENDPOINT, null, {
       extend: {
         method: 'POST',
@@ -23,6 +25,20 @@ angular.module('loanApp')
       },
       extend: (item) => {
         return API.extend(item).$promise;
-      }
+      },
+      getAmountToReturn: getAmountToReturn
     };
+
+    function getAmountToReturn(amount, dateTo, dateFrom) {
+      amount = parseFloat(amount);
+      dateFrom = dateFrom || new Date();
+
+      let dayCount = msToDays(dateTo - dateFrom);
+
+      return (amount + (amount * INTEREST * dayCount)).toFixed(2);
+    }
+
+    function msToDays(ms) {
+      return ms / 1000 / 60 / 60 / 24;
+    }
   });

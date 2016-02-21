@@ -20,7 +20,7 @@
       <label for="return">Return Date</label>
       <p class="input-group">
         <input type="text" class="form-control" id="return" uib-datepicker-popup
-               is-open="vm.datePickerOpened" show-button-bar="false" ng-model="vm.model.return" ng-change="vm.updateAmountToReturn()">
+               is-open="vm.datePickerOpened" show-button-bar="false" ng-model="vm.model.return">
         <span class="input-group-btn">
           <button type="button" class="btn btn-default" ng-click="vm.open()"><i
             class="glyphicon glyphicon-calendar"></i></button>
@@ -52,7 +52,7 @@
     </div>
     <div ng-if="vm.status" class="text-center">
       <h3 class="">Your application has been</h3>
-      <p class="text-uppercase    " ng-class="{'text-success': vm.status === 'approved', 'text-danger': vm.status === 'rejected'}">{{vm.status}}</p>
+      <p class="text-uppercase" ng-class="{'text-success': vm.status === 'approved', 'text-danger': vm.status === 'rejected'}">{{vm.status}}</p>
       <button type="button" class="btn btn-default" ng-click="vm.pollingStatus = false">{{vm.status === 'approved' ? 'I want more!' : 'Try again'}}</button>
     </div>
   </div>
